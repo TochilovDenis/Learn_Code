@@ -49,13 +49,22 @@ struct Apartment {
 };
 
 void ConsoleSetup(int);
+//Задача №2
 //int generateRandomInt(int, int);
 //double generateRandomDouble(double, double);
 //bool generateRandomBool();
+
+//template<typename T>
+//T generateRandom(T, T);
+//Apartment GeneratedApartment();
+//void PrintGeneratedApartment();
+
+//Задача №3
 template<typename T>
 T generateRandom(T, T);
 Apartment GeneratedApartment();
-void PrintGeneratedApartment();
+Apartment* GenerateAndFillArrayWithApartment(int, int, int, int);
+void PrintArrayWithApartment(Apartment*, int, int, int, int);
 
 int main() {
 	ConsoleSetup(1251);
@@ -66,10 +75,17 @@ int main() {
 	a.PrintApartment();*/
 
 	// Задача №2.
+	/*srand(unsigned(time(0)));
+	PrintGeneratedApartment();
+	PrintGeneratedApartment();
+	PrintGeneratedApartment();*/
+
+	// Задача №3
 	srand(unsigned(time(0)));
-	PrintGeneratedApartment();
-	PrintGeneratedApartment();
-	PrintGeneratedApartment();
+	int oneRoom = 10, twoRoom = 10, threeRoom = 10, fourRoom = 10;
+	Apartment* apartments = GenerateAndFillArrayWithApartment(oneRoom, twoRoom, threeRoom, fourRoom);
+	PrintArrayWithApartment(apartments, oneRoom, twoRoom, threeRoom, fourRoom);
+	delete[] apartments;
 
 	return 0;
 }
@@ -78,6 +94,8 @@ void ConsoleSetup(int mode) {
 	SetConsoleCP(mode);
 	SetConsoleOutputCP(mode);
 }
+
+// Задача №2
 
 //int generateRandomInt(int min, int max) {
 //	return min + (rand() % ((max + 1) - min));
@@ -96,7 +114,7 @@ T generateRandom(T min, T max) {
 		return T(min + (rand() % ((max + 1) - min)));
 	}
 	else if constexpr (is_floating_point<T>::value) {
-		return T(min + double(rand()) /double(RAND_MAX) * (max - min));
+		return T(min + double(rand()) / double(RAND_MAX) * (max - min));
 	}
 	else if constexpr (is_same<T, bool>::value) {
 		return rand() % 2;
@@ -116,4 +134,28 @@ Apartment GeneratedApartment() {
 void PrintGeneratedApartment() {
 	Apartment gA = GeneratedApartment();
 	gA.PrintApartment();
+}
+
+// Задача №3
+Apartment* GenerateAndFillArrayWithApartment(int oneRoom, int twoRoom, int threeRoom, int fourRoom) {
+	int totalRoom = oneRoom + twoRoom + threeRoom + fourRoom;
+	Apartment* apartments = new Apartment[totalRoom];
+	for (size_t i = 0; i < totalRoom; i++) {
+		Apartment gfA;
+		gfA.AmountOfRooms(i < oneRoom ? 1 : i < oneRoom + twoRoom ? 2 : i < oneRoom + twoRoom + threeRoom ? 3 : 4);
+		gfA.Meterage(generateRandom(20.0, 100.0));
+		gfA.NumberOfApartment(generateRandom(1, 200));
+		gfA.AmountOfResidents(generateRandom(1, 5));
+		gfA.Balcony(generateRandom(0, 1) == 0);
+		apartments[i] = gfA;
+	}
+	return apartments;
+}
+
+void PrintArrayWithApartment(Apartment* a, int oneRoom, int twoRoom, int threeRoom, int fourRoom) {
+	int totalRoom = oneRoom + twoRoom + threeRoom + fourRoom;
+	for (size_t i = 0; i < totalRoom; i++) {
+		cout << "Квартира " << (i + 1) << ": | ";
+		cout << a[i].GetApartmentString();
+	}
 }
