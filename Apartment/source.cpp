@@ -4,6 +4,7 @@
 #include <sstream>
 #include <cstdlib>
 #include <ctime>
+#include <iomanip>
 
 using namespace std;
 
@@ -28,34 +29,47 @@ struct Apartment {
 	int AmountOfResidents() const { return m_AmountOfResidents; }
 	bool Balcony() const { return m_Balcony; }
 
-	string GetApartmenttString() const {
+	string GetApartmentString() const {
 		return "Количество комнат: " + to_string(AmountOfRooms()) +
 			" | Метраж: " + ValueString(Meterage()) +
 			" кв.м | Номер квартиры: " + to_string(NumberOfApartment()) +
 			" | Количество жильцов: " + to_string(AmountOfResidents()) +
-			" | Наличие балкона: " + (Balcony() ? "Да" : "Нет");
+			" | Наличие балкона: " + (Balcony() ? "Да" : "Нет") + "\n";
 	}
 
 	string ValueString(double value) const {
 		ostringstream ss;
-		ss << value;
+		ss << fixed << setprecision(2) << value;
 		return ss.str();
 	}
 
 	void PrintApartment() const {
-		cout << GetApartmenttString();
+		cout << GetApartmentString();
 	}
 };
 
 void ConsoleSetup(int);
+//int generateRandomInt(int, int);
+//double generateRandomDouble(double, double);
+//bool generateRandomBool();
+template<typename T>
+T generateRandom(T, T);
+Apartment GeneratedApartment();
+void PrintGeneratedApartment();
 
 int main() {
 	ConsoleSetup(1251);
 
 	// Задача №1.
-	Apartment a;
+	/*Apartment a;
 	a = { 1, 42.2, 154, 1, false };
-	a.PrintApartment();
+	a.PrintApartment();*/
+
+	// Задача №2.
+	srand(unsigned(time(0)));
+	PrintGeneratedApartment();
+	PrintGeneratedApartment();
+	PrintGeneratedApartment();
 
 	return 0;
 }
@@ -63,4 +77,43 @@ int main() {
 void ConsoleSetup(int mode) {
 	SetConsoleCP(mode);
 	SetConsoleOutputCP(mode);
+}
+
+//int generateRandomInt(int min, int max) {
+//	return min + (rand() % ((max + 1) - min));
+//}
+//
+//double generateRandomDouble(double min, double max) {
+//	return min + double(rand()) / double(RAND_MAX) * (max - min);
+//}
+//bool generateRandomBool() {
+//	return  rand() % 2;
+//}
+
+template<typename T>
+T generateRandom(T min, T max) {
+	if constexpr (is_integral<T>::value) {
+		return T(min + (rand() % ((max + 1) - min)));
+	}
+	else if constexpr (is_floating_point<T>::value) {
+		return T(min + double(rand()) /double(RAND_MAX) * (max - min));
+	}
+	else if constexpr (is_same<T, bool>::value) {
+		return rand() % 2;
+	}
+}
+
+Apartment GeneratedApartment() {
+	Apartment gA;
+	gA.AmountOfRooms(generateRandom(1, 5));
+	gA.Meterage(generateRandom(20.0, 100.0));
+	gA.NumberOfApartment(generateRandom(1, 200));
+	gA.AmountOfResidents(generateRandom(1, 5));
+	gA.Balcony(generateRandom(0, 1) == 0);
+	return gA;
+}
+
+void PrintGeneratedApartment() {
+	Apartment gA = GeneratedApartment();
+	gA.PrintApartment();
 }

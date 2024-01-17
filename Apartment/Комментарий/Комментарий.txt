@@ -1,1 +1,117 @@
-﻿
+﻿// Включение необходимых библиотек
+#include <iostream>
+#include <Windows.h>
+#include <string>
+#include <sstream>
+#include <cstdlib>
+#include <ctime>
+#include <iomanip>
+
+// Использование стандартного пространства имен
+using namespace std;
+
+// Определение структуры Apartment (Квартира)
+struct Apartment {
+	int m_AmountOfRooms{ 0 }; // Количество комнат
+	double m_Meterage{ 0 };	 // Метраж
+	int m_NumberOfApartment{ 0 }; // Номер квартиры
+	int m_AmountOfResidents{ 0 }; // Количество жильцов
+	bool m_Balcony{ false }; // Наличие балкона
+
+	// Методы setter для установки значений приватных переменных
+	void AmountOfRooms(int value) { m_AmountOfRooms = value; }
+	void Meterage(double value) { m_Meterage = value; }
+	void NumberOfApartment(int value) { m_NumberOfApartment = value; }
+	void AmountOfResidents(int value) { m_AmountOfResidents = value; }
+	void Balcony(bool value) { m_Balcony = value; }
+
+	// Методы getter для получения значений приватных переменных
+	int AmountOfRooms() const { return m_AmountOfRooms; }
+	double Meterage() const { return m_Meterage; }
+	int NumberOfApartment() const { return m_NumberOfApartment; }
+	int AmountOfResidents() const { return m_AmountOfResidents; }
+	bool Balcony() const { return m_Balcony; }
+
+	// Метод для преобразования информации о квартире в строку
+	string GetApartmenttString() const {
+		string result = "Количество комнат: " + to_string(AmountOfRooms()) +
+			" | Метраж: " + ValueString(Meterage()) +
+			" кв.м | Номер квартиры: " + to_string(NumberOfApartment()) +
+			" | Количество жильцов: " + to_string(AmountOfResidents()) +
+			" | Наличие балкона: " + (Balcony() ? "Да" : "Нет") + "\n";
+		return result;
+	}
+
+	// Метод для форматирования чисел с плавающей точкой
+	string ValueString(double value) const {
+		ostringstream ss;
+		ss << fixed << setprecision(2) << value;
+		return ss.str();
+	}
+
+	// Метод для вывода информации о квартире в консоль
+	void PrintApartment() const {
+		cout << GetApartmenttString();
+	}
+};
+
+// Прототип функции для настройки консоли
+void ConsoleSetup(int);
+
+// Прототипы функций для генерации случайных чисел и создания случайной квартиры
+template<typename T>
+T generateRandom(T, T);
+Apartment GeneratedApartment();
+void PrintGeneratedApartment();
+
+// Главная функция программы
+int main() {
+	// Установка кодировки консоли
+	ConsoleSetup(1251);
+
+	// Генерация и печать трех случайных квартир
+	srand(unsigned(time(0)));
+	PrintGeneratedApartment();
+	PrintGeneratedApartment();
+	PrintGeneratedApartment();
+
+	return 0;
+}
+
+// Функция для настройки кодировки консоли
+void ConsoleSetup(int mode) {
+	SetConsoleCP(mode);
+	SetConsoleOutputCP(mode);
+}
+
+// Функция для генерации случайного числа в заданном диапазоне
+template<typename T>
+T generateRandom(T min, T max) {
+	if constexpr (is_integral<T>::value) {
+		return T(min + (rand() % ((max + 1) - min)));
+	}
+	else if constexpr (is_floating_point<T>::value) {
+		return T(min + double(rand()) /double(RAND_MAX) * (max - min));
+	}
+	else if constexpr (is_same<T, bool>::value) {
+		return rand() % 2;
+	}
+}
+
+// Функция для создания случайной квартиры
+Apartment GeneratedApartment() {
+	Apartment gA;
+	gA.AmountOfRooms(generateRandom(1, 5));
+	gA.Meterage(generateRandom(20.0, 100.0));
+	gA.NumberOfApartment(generateRandom(1, 200));
+	gA.AmountOfResidents(generateRandom(1, 5));
+	gA.Balcony(generateRandom(0, 1) == 0);
+	return gA;
+}
+// Функция для печати сгенерированной квартиры
+void PrintGeneratedApartment() {
+	Apartment gA = GeneratedApartment();
+	gA.PrintApartment();
+}
+
+
